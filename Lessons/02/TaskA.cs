@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading.Tasks;
+
 
 namespace Lessons._02
 {
@@ -9,7 +11,21 @@ namespace Lessons._02
     {
         public static void Run()
         {
-            throw new NotImplementedException();
+            Task task = Task.Run(() =>
+            {
+                Console.WriteLine("Task started");
+
+                for (int i = 0; i < 10; i++)
+                {
+                    Console.WriteLine("Task line {0}", i);
+                }
+            });
+
+            Console.WriteLine("Finish the task");
+
+            task.Wait(1000);
         }
+
     }
+
 }

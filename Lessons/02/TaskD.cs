@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Threading;
 
 namespace Lessons._02
 {
@@ -10,7 +12,28 @@ namespace Lessons._02
     {
         public static void Run()
         {
-            throw new NotImplementedException();
+            int workerThreads = 10;
+            int completionPortThreads = 10;
+
+            ThreadPool.SetMaxThreads(workerThreads,completionPortThreads);
+
+            for (int i = 0; i < 15; i++)
+            {
+                var stopWatch = new Stopwatch();
+
+                stopWatch.Start();
+
+                ThreadPool.QueueUserWorkItem(state =>
+                {
+                    Console.WriteLine("working on a thread {0}", (i + 1));
+                    Thread.Sleep(1000);
+                });
+
+                stopWatch.Stop();
+
+                Console.WriteLine(stopWatch.Elapsed);
+            }
+            
         }
     }
 }
