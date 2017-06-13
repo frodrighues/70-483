@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Lessons._01
 {
@@ -12,11 +13,53 @@ namespace Lessons._01
     /// Create a delegate instance for M1 + M2 and invoke it for current date and time.
     /// Create a delegate instance for M1 + M2 - M1 and invoke it for current date and time.
     /// </summary>
-    public class TaskA
+    public delegate void PrintDateTimeFunnyInfo(DateTime dateTime);
+
+    public static class TaskA
     {
         public static void Run()
         {
-            throw new NotImplementedException();
+            //1
+            PrintDateTimeFunnyInfo firstTask = MinutesToLunch;
+
+            firstTask(DateTime.Now);
+            Console.WriteLine("--------------------------------------------");
+            //2
+            List<PrintDateTimeFunnyInfo> secondTask = new List<PrintDateTimeFunnyInfo>
+            {
+                MinutesToLunch,
+                NumberOfDayOfWeek
+            };
+
+            secondTask.ForEach(x => x.Invoke(DateTime.Now));
+            Console.WriteLine("--------------------------------------------");
+            //3
+            List<PrintDateTimeFunnyInfo> thirdTask = new List<PrintDateTimeFunnyInfo>
+            {
+                MinutesToLunch,
+                NumberOfDayOfWeek
+            };
+
+            thirdTask.Remove(MinutesToLunch);
+
+            thirdTask.ForEach(x => x.Invoke(DateTime.Now));
+            Console.WriteLine("--------------------------------------------");
+        }
+
+        public static void MinutesToLunch(DateTime dateTimeToLunch)
+        {
+            var timeToLunch = new DateTime(2017,01,01,12,0,0,0).TimeOfDay - dateTimeToLunch.TimeOfDay;
+            var result = timeToLunch.Minutes;
+
+
+            Console.WriteLine("Next lunch in {0} minutes", result);
+        }
+
+        public static void NumberOfDayOfWeek(DateTime dateTimeWeek)
+        {
+            var numberWeek = (int) dateTimeWeek.DayOfWeek + 1;
+
+            Console.WriteLine("Today is the day number {0} in this week.", numberWeek);
         }
     }
 }

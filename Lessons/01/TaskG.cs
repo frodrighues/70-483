@@ -38,31 +38,57 @@ namespace Lessons._01
         [Fact]
         public void Check_WhenTemperatureIsLowerAndHeaterIsStarted_ShouldNotStartHeater()
         {
-            throw new NotImplementedException();
+            _currentTemperatureProvider.Stub(x => x.GetTemperature()).Return(19);
+            _temperatureSettingsProvider.Stub(x => x.GetRequestedTemperature()).Return(20);
+
+            _thermostat.Check();
+
+            Assert.Equal(true, !_heater.IsStarted);
         }
 
         [Fact]
         public void Check_WhenTemperatureIsAsRequestedAndHeaterIsNotStarted_ShouldNotStartHeater()
         {
-            throw new NotImplementedException();
+            _currentTemperatureProvider.Stub(x => x.GetTemperature()).Return(20);
+            _temperatureSettingsProvider.Stub(x => x.GetRequestedTemperature()).Return(20);
+
+            _thermostat.Check();
+
+            Assert.Equal(true, !_heater.IsStarted);
         }
 
         [Fact]
         public void Check_WhenTemperatureIsAsRequestedAndHeaterIsStarted_ShouldStopHeater()
         {
-            throw new NotImplementedException();
+            _currentTemperatureProvider.Stub(x => x.GetTemperature()).Return(20);
+            _temperatureSettingsProvider.Stub(x => x.GetRequestedTemperature()).Return(20);
+            _heater.IsStarted = true;
+
+            _thermostat.Check();
+
+            _heater.AssertWasCalled(x => x.Stop());
         }
 
         [Fact]
         public void Check_WhenTemperatureIsHigherAndHeaterIsStarted_ShouldStopHeater()
         {
-            throw new NotImplementedException();
+            _currentTemperatureProvider.Stub(x => x.GetTemperature()).Return(25);
+            _temperatureSettingsProvider.Stub(x => x.GetRequestedTemperature()).Return(20);
+
+            _thermostat.Check();
+
+            _heater.AssertWasCalled(x => x.Stop());
         }
 
         [Fact]
         public void Check_WhenTemperatureIsHigherAndHeaterIsNotStarted_ShouldNotStopHeater()
         {
-            throw new NotImplementedException();
+            _currentTemperatureProvider.Stub(x => x.GetTemperature()).Return(25);
+            _temperatureSettingsProvider.Stub(x => x.GetRequestedTemperature()).Return(20);
+
+            _thermostat.Check();
+
+            _heater.AssertWasNotCalled(x => x.Stop());
         }
     }
 
@@ -87,21 +113,23 @@ namespace Lessons._01
             var currentTemperature = _currentTemperatureProvider.GetTemperature();
             var requestedTemperature = _temperatureSettingsProvider.GetRequestedTemperature();
 
-            if (currentTemperature > requestedTemperature && _heater.IsStarted)
+            if (currentTemperature >= requestedTemperature && _heater.IsStarted)
             {
                 _heater.Stop();
+                _heater.IsStarted = false;
             }
 
-            if (currentTemperature < requestedTemperature && !_heater.IsStarted)
+            if (currentTemperature <= requestedTemperature && !_heater.IsStarted)
             {
                 _heater.Start();
+                _heater.IsStarted = true;
             }
         }
     }
 
     public interface IHeater
     {
-        bool IsStarted { get; }
+        bool IsStarted { get; set; }
 
         void Start();
         void Stop();

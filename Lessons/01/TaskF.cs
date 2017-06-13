@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Timers;
 
 namespace Lessons._01
 {
@@ -14,7 +15,28 @@ namespace Lessons._01
     {
         public static void Run()
         {
-            throw new NotImplementedException();
+            var time = new Timer(1000);
+            
+            //time.Elapsed += new ElapsedEventHandler(TimeEvent);
+
+            time.Start();
+
+        }
+
+    }
+
+    public static class MyEventClass
+    {
+        public static event Func<decimal, decimal> OnmarketUpdated;
+
+        public static void Raise()
+        {
+            if (OnmarketUpdated != null)
+            {
+                var random1 = new Random();
+
+                OnmarketUpdated(random1.Next(20,80));
+            }
         }
     }
 }
